@@ -59,6 +59,19 @@ public class SnakeTail : MonoBehaviour
     }
 
     /// <summary>
+    /// reposition tail
+    /// </summary>
+    /// <param name="mapNode">new node</param>
+    /// <param name="direction">new direction</param>
+    public void Reposition(MapNode mapNode, MoveDirection direction)
+    {
+        currentNode.IsObstacle = false;
+        transform.position = new Vector3(mapNode.NodePosition.x, 0, mapNode.NodePosition.y);
+        currentNode = mapNode;
+        moveDirection = direction;
+    }
+
+    /// <summary>
     /// Grow tail
     /// </summary>
     public void Grow()

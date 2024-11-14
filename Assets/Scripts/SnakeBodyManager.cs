@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -87,7 +88,7 @@ public class SnakeBodyManager : MonoBehaviour
         {
             var node = nodes[nodes.Count - 1 - i];
             var dir = directions[directions.Count-1 - i];
-            tails[i].Move(node, dir);
+            tails[i].Reposition(node, dir);
         }
     }
 }
