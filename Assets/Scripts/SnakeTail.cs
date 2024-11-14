@@ -102,8 +102,17 @@ public class SnakeTail : MonoBehaviour
         if (parentTail == null)
             return;
         
+        parentTail.ClearChild();
         currentNode.IsObstacle = false;
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Clear child reference
+    /// </summary>
+    public void ClearChild()
+    {
+        childTail = null;
     }
 
     /// <summary>
