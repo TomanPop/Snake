@@ -1,15 +1,21 @@
-using UnityEngine;
-
 /// <summary>
 /// Reduce food
 /// </summary>
 public class ReduceFood : BaseFood
 {
-    public override void ApplyEffect(GameObject snake)
+    private SnakeFactory _snakeFactory;
+
+    public void Initialize(SnakeFactory snakeFactory, SnakeController snakeController, MapNode node)
     {
-        var snakeBodyManager = snake.GetComponent<SnakeBodyManager>();
-        snakeBodyManager.ReduceSnake();
+        _snakeFactory = snakeFactory;
+        base.Initialize(snakeController, node);
+    }
+    
+    public override void Eat()
+    {
+        var snakeBody = _snakeController.GetSnakeBody();
+        snakeBody.RemoveBodyPart(null, _snakeFactory);
         
-        base.ApplyEffect(snake);
+        base.Eat();
     }
 }

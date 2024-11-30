@@ -5,11 +5,22 @@ using UnityEngine;
 /// </summary>
 public class GrowFood : BaseFood
 {
-    public override void ApplyEffect(GameObject snake)
+    private SnakeFactory _snakeFactory;
+
+    public void Initialize(SnakeFactory snakeFactory, SnakeController snakeController, MapNode node)
     {
-        var snakeBodyManager = snake.GetComponent<SnakeBodyManager>();
-        snakeBodyManager.GrowSnake();
+        _snakeFactory = snakeFactory;
+        base.Initialize(snakeController, node);
+    }
+    
+    public override void Eat()
+    {
+        base.Eat();
         
-        base.ApplyEffect(snake);
+        var head = _snakeController.GetSnakeBody();
+        var tail = head.GetTail();
+        var body = _snakeFactory.CreateSnakeBodyPart(tail.GetCurrentNode());
+        
+        tail.AddBodyPart(body);
     }
 }

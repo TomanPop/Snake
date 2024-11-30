@@ -6,52 +6,54 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class FoodManager : MonoBehaviour
 {
-    [SerializeField] private BaseFood[] foodPrefabs;
-    [SerializeField] private float foodTimer;
+    private float _foodTimer;
+    private Map _map;
+    private GameManager _gameManager;
+    private FoodFactory _foodFactory;
+    private IFood _currentFood;
+    private float _nextFoodTime;
 
-    private Map map;
-    private GameManager gameManager;
-    private BaseFood currentFood;
-    private float nextFoodTime;
-
-    private void Start()
+    public void Initialize(Map map, GameManager gameManager, FoodFactory foodFactory, IAppSettingsService appSettingsService)
     {
-        map = FindObjectOfType<Map>();
-        gameManager = FindObjectOfType<GameManager>();
+        _foodTimer = appSettingsService.GameSettings.FoodTimer;
+        _map = map;
+        _gameManager = gameManager;
+        _foodFactory = foodFactory;
     }
 
     private void Update()
     {
-        if (currentFood == null || Time.time > nextFoodTime)
+        if (_currentFood == null || Time.time > _nextFoodTime)
             GenerateFood();
     }
 
     private void GenerateFood()
     {
-        if (currentFood != null)
+        if (_currentFood != null)
         {
-            currentFood.FoodEaten -= OnFoodEaten;
-            Destroy(currentFood.gameObject);
+            ClearFood();
         }
 
-        if (!map.TryGetFreeNode(out var node))
+        if (!_map.TryGetFreeNode(out var node))
             return;
-        
-        var position = new Vector3(node.NodePosition.x, 0, node.NodePosition.y);
-        currentFood = Instantiate(PickFood(), position, Quaternion.identity);
-        currentFood.FoodEaten += OnFoodEaten;
-        nextFoodTime = Time.time + foodTimer;
+
+        _currentFood = _foodFactory.CreateFood(node);
+        _currentFood.FoodEaten += OnFoodEaten;
+
+        _nextFoodTime = Time.time + _foodTimer;
     }
 
     private void OnFoodEaten(int score)
     {
-        gameManager.AddScore(score);
-        currentFood.FoodEaten -= OnFoodEaten;
-        Destroy(currentFood.gameObject);
+        _gameManager.AddScore(score);
+        ClearFood();
     }
 
-    private BaseFood PickFood()
+    private void ClearFood()
     {
-        return foodPrefabs[Random.Range(0, foodPrefabs.Length)];
+        _currentFood.FoodEaten -= OnFoodEaten;
+        var food = _currentFood as BaseFood;
+        Destroy(food.gameObject);
+        _currentFood = null;
     }
 }

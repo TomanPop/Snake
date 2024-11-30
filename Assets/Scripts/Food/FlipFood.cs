@@ -1,15 +1,16 @@
-using UnityEngine;
-
 /// <summary>
 /// Flip food
 /// </summary>
 public class FlipFood : BaseFood
 {
-    public override void ApplyEffect(GameObject snake)
+    public override void Eat()
     {
-        var snakeBodyManager = snake.GetComponent<SnakeBodyManager>();
-        snakeBodyManager.FlipSnake();
+        base.Eat();
         
-        base.ApplyEffect(snake);
+        var snakeBody = _snakeController.GetSnakeBody();
+        var tail = snakeBody.GetTail();
+        
+        snakeBody.RevertBody(null);
+        _snakeController.SetSnakeBody(tail);
     }
 }

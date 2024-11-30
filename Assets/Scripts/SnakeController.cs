@@ -1,126 +1,118 @@
-using System;
 using UnityEngine;
 
 /// <summary>
-/// Snake controller
+/// Snake body manager
 /// </summary>
 public class SnakeController : MonoBehaviour
 {
-    [SerializeField] private float snakeBaseTimeStep = 0.5f;
+    private float _snakeBaseTimeStep;
+    private IBody _snakeBody;
+    private GameManager _gameManager;
+    private SpeedBuff _speedBuff;
 
-    private SpeedBuff speedBuff;
-    private GameManager gameManager;
-    private MapNode currentNode;
-    private float nextStep;
-    private bool isAlive;
-    private MoveDirection currentMoveDirection = MoveDirection.Right;
-    private MoveDirection nextMoveDirection = MoveDirection.Right;
+    private float _nextStep;
+    private bool _isAlive = true;
 
-    public event Action<MapNode, MoveDirection> SnakeMoved;
-    
-    void Start()
+    public void Initialize(GameManager gameManager, IBody snakeBody, IAppSettingsService appSettingsService)
     {
-        isAlive = true;
-        gameManager = FindObjectOfType<GameManager>();
-        nextStep = Time.time + snakeBaseTimeStep;
+        _gameManager = gameManager;
+        _snakeBody = snakeBody;
 
-        var map = FindObjectOfType<Map>();
-        if(map.TryGetFreeNode(out var node))
-            SetStart(node, MoveDirection.Right);
+        _snakeBaseTimeStep = appSettingsService.GameSettings.SnakeBaseTimeStep;
+        Move(GameContext.BeginDirection);
+    }
+
+    private void LateUpdate()
+    {
+        if (Time.time > _nextStep)
+            MoveSnake();
+    }
+
+    private void MoveSnake()
+    {
+        var moveDirection = _snakeBody.GetMoveDirection();
+        MoveSnake(moveDirection);
     }
     
-    void Update()
+    public void Move(MoveDirection moveDirection)
     {
-        if (!isAlive)
+        if (!ValidateInput(moveDirection))
             return;
         
-        var isInput = UpdateInput();
-
-        if (isInput || Time.time > nextStep)
-            Step();
+        MoveSnake(moveDirection);
     }
 
-    /// <summary>
-    /// Used for buff application
-    /// </summary>
-    /// <param name="buff">buff to apply</param>
-    public void ApplyBuff(SpeedBuff buff)
+    private void MoveSnake(MoveDirection moveDirection)
     {
-        speedBuff = buff;
-    }
-
-    public void SetStart(MapNode node, MoveDirection direction)
-    {
-        currentNode = node;
-        currentMoveDirection = nextMoveDirection = direction;
+        var newNode = _snakeBody.GetCurrentNode().GetNeighbour(moveDirection);
+        _nextStep = Time.time + _snakeBaseTimeStep * (_speedBuff != null ? _speedBuff.GetSpeedAdjustment() : 1);
         
-        Step();
+        Move(newNode);
     }
 
-    public MapNode GetNode()
+    private bool ValidateInput(MoveDirection moveDirection)
     {
-        return currentNode;
-    }
+        var currentDirection = _snakeBody.GetMoveDirection();
 
-    public MoveDirection GetDirection()
-    {
-        return currentMoveDirection;
-    }
-
-    private bool UpdateInput()
-    {
-        //using horizontal and vertical so its usable on joystick too
-        var x = Input.GetAxis("Horizontal");
-        var y = Input.GetAxis("Vertical");
+        if (moveDirection == currentDirection)
+            return false;
         
-        Input.ResetInputAxes();
+        if (moveDirection == MoveDirection.Down && currentDirection == MoveDirection.Up)
+            return false;
+        
+        if (moveDirection == MoveDirection.Up && currentDirection == MoveDirection.Down)
+            return false;
+        
+        if (moveDirection == MoveDirection.Left && currentDirection == MoveDirection.Right)
+            return false;
+        
+        if (moveDirection == MoveDirection.Right && currentDirection == MoveDirection.Left)
+            return false;
 
-        if (x > 0 && currentMoveDirection != MoveDirection.Left && currentMoveDirection != MoveDirection.Right)
+        return true;
+    }
+
+    private void Move(MapNode node)
+    {
+        var obstacle = node.Obstacle;
+        if (obstacle  != null)
         {
-            nextMoveDirection = MoveDirection.Right;
-            return true;
+            switch (obstacle)
+            {
+                case IFood food:
+                    _snakeBody.Move(node);
+                    food.Eat();
+                    return;
+                case IBody body:
+                    _isAlive = false;
+                    _gameManager.GameOver();
+                    return;
+            }
         }
         
-        if (x < 0 && currentMoveDirection != MoveDirection.Left && currentMoveDirection != MoveDirection.Right)
-        {
-            nextMoveDirection = MoveDirection.Left;
-            return true;
-        }
-        
-        if (y > 0 && currentMoveDirection != MoveDirection.Up && currentMoveDirection != MoveDirection.Down)
-        {
-            nextMoveDirection = MoveDirection.Up;
-            return true;
-        }
-        
-        if (y < 0 && currentMoveDirection != MoveDirection.Up && currentMoveDirection != MoveDirection.Down)
-        {
-            nextMoveDirection = MoveDirection.Down;
-            return true;
-        }
-        
-        return false;
+        _snakeBody.Move(node);
     }
 
-    private void Step()
+    public IBody GetSnakeBody()
     {
-        var newNode = currentNode.GetNeighbour(nextMoveDirection);
-        transform.position = new Vector3(newNode.NodePosition.x, 0, newNode.NodePosition.y);
-        
-        SnakeMoved?.Invoke(currentNode, nextMoveDirection);
+        return _snakeBody;
+    }
 
-        //crashed
-        if (newNode.IsObstacle)
-        {
-            isAlive = false;
-            gameManager.GameOver();
+    public void SetSnakeBody(IBody body)
+    {
+        _snakeBody = body;
+    }
+
+    public void UnregisterBuff(SpeedBuff speedBuff)
+    {
+        _speedBuff = speedBuff;
+    }
+
+    public void RegisterBuff(SpeedBuff speedBuff)
+    {
+        if (speedBuff != _speedBuff)
             return;
-        }
 
-        currentNode = newNode;
-        currentMoveDirection = nextMoveDirection;
-
-        var buff = speedBuff != null ? speedBuff.GetBuff() : 1;
-        nextStep = Time.time + snakeBaseTimeStep * buff;
+        _speedBuff = null;
     }
 }

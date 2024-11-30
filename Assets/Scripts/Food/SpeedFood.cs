@@ -7,12 +7,10 @@ public class SpeedFood : BaseFood
 {
     [SerializeField] private SpeedBuff buffPrefab;
     
-    public override void ApplyEffect(GameObject snake)
+    public override void Eat()
     {
+        base.Eat();
         var buff = Instantiate(buffPrefab);
-        var snakeController = snake.GetComponent<SnakeController>();
-        snakeController.ApplyBuff(buff);
-        
-        base.ApplyEffect(snake);
+        buff.Initialize(_snakeController);
     }
 }

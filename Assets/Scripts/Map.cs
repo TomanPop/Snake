@@ -6,16 +6,18 @@ using UnityEngine;
 /// </summary>
 public class Map : MonoBehaviour
 {
-    [SerializeField] private Vector2Int mapSize;
     [SerializeField] private MapNode mapNodePrefab;
 
+    private Vector2Int mapSize;
     private Dictionary<Vector2Int, MapNode> mapNodes;
 
     private const float MaxOffsetY = 0.1f;
     private const int MaxAttemptCount = 50;
     
-    void Awake()
+    public void Initialize(IAppSettingsService appSettingsService)
     {
+        mapSize = new Vector2Int(appSettingsService.GameSettings.MapSizeX,
+            appSettingsService.GameSettings.MapSizeY);
         mapNodes = new Dictionary<Vector2Int, MapNode>();
         
         GenerateMap();
@@ -94,7 +96,7 @@ public class Map : MonoBehaviour
             var nodeId = new Vector2Int(Random.Range(0, mapSize.x), Random.Range(0, mapSize.y));
             var nodeCheck = mapNodes[nodeId];
 
-            if (nodeCheck.IsObstacle)
+            if (nodeCheck.Obstacle != null)
                 continue;
 
             node = nodeCheck;
@@ -109,7 +111,7 @@ public class Map : MonoBehaviour
                 var nodeId = new Vector2Int(x, y);
                 var nodeCheck = mapNodes[nodeId];
 
-                if (!nodeCheck.IsObstacle)
+                if (nodeCheck.Obstacle == null)
                 {
                     node = nodeCheck;
                     return true;

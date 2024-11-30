@@ -7,9 +7,10 @@ using UnityEngine;
 public class MapNode : MonoBehaviour
 {
     public Vector2Int NodePosition { get; private set; }
-    public bool IsObstacle { get; set; }
+    public IHitable Obstacle { get; set; }
 
-    private Dictionary<MoveDirection, MapNode> neighbours;
+    private Dictionary<MoveDirection, MapNode> _neighbours;
+    private Dictionary<MapNode, MoveDirection> _directions;
 
     /// <summary>
     /// Initialize node
@@ -19,18 +20,26 @@ public class MapNode : MonoBehaviour
     public void Initialize(Map map, Vector2Int nodePosition)
     {
         NodePosition = nodePosition;
-        neighbours = new Dictionary<MoveDirection, MapNode>();
+        _neighbours = new Dictionary<MoveDirection, MapNode>();
+        _directions = new Dictionary<MapNode, MoveDirection>();
 
         //mapping neighborhood
         var neighbourUp = map.GetNeighbourNode(NodePosition, MoveDirection.Up);
         var neighbourDown = map.GetNeighbourNode(NodePosition, MoveDirection.Down);
         var neighbourLeft = map.GetNeighbourNode(NodePosition, MoveDirection.Left);
         var neighbourRight = map.GetNeighbourNode(NodePosition, MoveDirection.Right);
-        
-        neighbours.Add(MoveDirection.Up, neighbourUp);
-        neighbours.Add(MoveDirection.Down, neighbourDown);
-        neighbours.Add(MoveDirection.Left, neighbourLeft);
-        neighbours.Add(MoveDirection.Right, neighbourRight);
+
+        _neighbours.Add(MoveDirection.None, this);
+        _neighbours.Add(MoveDirection.Up, neighbourUp);
+        _neighbours.Add(MoveDirection.Down, neighbourDown);
+        _neighbours.Add(MoveDirection.Left, neighbourLeft);
+        _neighbours.Add(MoveDirection.Right, neighbourRight);
+
+        _directions.Add(this, MoveDirection.None);
+        _directions.Add(neighbourUp, MoveDirection.Up);
+        _directions.Add(neighbourDown, MoveDirection.Down);
+        _directions.Add(neighbourLeft, MoveDirection.Left);
+        _directions.Add(neighbourRight, MoveDirection.Right);
     }
 
     /// <summary>
@@ -40,6 +49,11 @@ public class MapNode : MonoBehaviour
     /// <returns>neighbour node in direction</returns>
     public MapNode GetNeighbour(MoveDirection direction)
     {
-        return neighbours[direction];
+        return _neighbours[direction];
+    }
+
+    public MoveDirection GetDirection(MapNode neighbour)
+    {
+        return _directions[neighbour];
     }
 }

@@ -50,9 +50,9 @@ public class SnakeTail : MonoBehaviour
         if(childTail != null)
             childTail.Move(currentNode, moveDirection);
         else if(currentNode != null)
-            currentNode.IsObstacle = false;
+            currentNode.Obstacle = null;
         
-        mapNode.IsObstacle = true;
+        mapNode.Obstacle = null;
         transform.position = new Vector3(mapNode.NodePosition.x, 0, mapNode.NodePosition.y);
         currentNode = mapNode;
         moveDirection = direction;
@@ -65,7 +65,7 @@ public class SnakeTail : MonoBehaviour
     /// <param name="direction">new direction</param>
     public void Reposition(MapNode mapNode, MoveDirection direction)
     {
-        currentNode.IsObstacle = false;
+        currentNode.Obstacle = null;
         transform.position = new Vector3(mapNode.NodePosition.x, 0, mapNode.NodePosition.y);
         currentNode = mapNode;
         moveDirection = direction;
@@ -103,12 +103,12 @@ public class SnakeTail : MonoBehaviour
             return;
         
         parentTail.ClearChild();
-        currentNode.IsObstacle = false;
+        currentNode.Obstacle = null;
         Destroy(gameObject);
     }
 
     /// <summary>
-    /// Clear child reference
+    /// CleanUp child reference
     /// </summary>
     public void ClearChild()
     {

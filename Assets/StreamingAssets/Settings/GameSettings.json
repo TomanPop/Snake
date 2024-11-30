@@ -1,0 +1,6 @@
+{
+  "MapSizeX": 10,
+  "MapSizeY": 10,
+  "SnakeBaseTimeStep": 0.5,
+  "FoodTimer": 10
+}
