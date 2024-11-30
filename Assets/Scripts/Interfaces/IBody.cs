@@ -4,7 +4,6 @@ public interface IBody : IHitable
 {
     public MoveDirection GetMoveDirection();
     public IMapNode GetCurrentNode();
-    public IMapNode GetPreviousNode();
     public void AddBodyPart(IBody child);
     public void RemoveBodyPart(IBody parent, ISnakeFactory factory);
     public void ClearChild();

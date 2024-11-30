@@ -19,11 +19,12 @@ public class MainMenu : MonoBehaviour
     {
         var jsonService = new JsonService();
         _appSettingsService = new AppSettingsService(jsonService);
+        var gameSaveData = _appSettingsService.GameSaveData;
 
-        highScore.text = _appSettingsService.GameSaveData.highScore.ToString();
+        highScore.text = gameSaveData.highScore.ToString();
         
-        continueButton.interactable = _appSettingsService.GameSaveData.lastBodyParts != null &&
-                                      _appSettingsService.GameSaveData.lastBodyParts.Length > 0;
+        continueButton.interactable = gameSaveData.lastBodyParts != null &&
+                                      gameSaveData.lastBodyParts.Length > 0;
     }
 
     public void OnNewGameClick()
@@ -32,7 +33,7 @@ public class MainMenu : MonoBehaviour
         GameContext.BeginDirection = MoveDirection.Right;
         GameContext.SnakePositions = new[] { new Vector2Int(5, 5) };
         
-        LoadGame();
+        CreateGame();
     }
 
     public void OnContinueClick()
@@ -43,10 +44,10 @@ public class MainMenu : MonoBehaviour
         GameContext.BeginDirection = gameSaveData.lastMoveDirection;
         GameContext.SnakePositions = gameSaveData.lastBodyParts;
 
-        LoadGame();
+        CreateGame();
     }
 
-    private void LoadGame()
+    private void CreateGame()
     {
         SceneManager.LoadScene(1);
     }

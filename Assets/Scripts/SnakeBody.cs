@@ -76,11 +76,6 @@ public class SnakeBody : MonoBehaviour, IBody, IDestroyable
     {
         return _currentNode;
     }
-    
-    public IMapNode GetPreviousNode()
-    {
-        return _previousNode;
-    }
 
     public MoveDirection GetMoveDirection()
     {
