@@ -3,12 +3,12 @@
 public interface IBody : IHitable
 {
     public MoveDirection GetMoveDirection();
-    public MapNode GetCurrentNode();
-    public MapNode GetPreviousNode();
+    public IMapNode GetCurrentNode();
+    public IMapNode GetPreviousNode();
     public void AddBodyPart(IBody child);
-    public void RemoveBodyPart(IBody parent, SnakeFactory factory);
+    public void RemoveBodyPart(IBody parent, ISnakeFactory factory);
     public void ClearChild();
-    public void Move(MapNode targetNode);
+    public void Move(IMapNode targetNode);
     public IBody GetTail();
     public IBody GetChild();
     public void RevertBody(IBody parent);

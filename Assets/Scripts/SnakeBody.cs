@@ -1,11 +1,9 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
+﻿using UnityEngine;
 
 public class SnakeBody : MonoBehaviour, IBody, IDestroyable
 {
-    private MapNode _currentNode;
-    private MapNode _previousNode;
+    private IMapNode _currentNode;
+    private IMapNode _previousNode;
     private IBody _childBody;
     private MoveDirection _moveDirection;
 
@@ -14,7 +12,7 @@ public class SnakeBody : MonoBehaviour, IBody, IDestroyable
     /// </summary>
     /// <param name="parent">body parent</param>
     /// <param name="node"></param>
-    public void Initialize(MapNode node)
+    public void Initialize(IMapNode node)
     {
         _currentNode = _previousNode = node;
         UpdatePosition();
@@ -28,7 +26,7 @@ public class SnakeBody : MonoBehaviour, IBody, IDestroyable
             _childBody.AddBodyPart(child);
     }
 
-    public void RemoveBodyPart(IBody parent, SnakeFactory factory)
+    public void RemoveBodyPart(IBody parent, ISnakeFactory factory)
     {
         if (_childBody != null)
         {
@@ -74,12 +72,12 @@ public class SnakeBody : MonoBehaviour, IBody, IDestroyable
         _childBody = null;
     }
 
-    public MapNode GetCurrentNode()
+    public IMapNode GetCurrentNode()
     {
         return _currentNode;
     }
     
-    public MapNode GetPreviousNode()
+    public IMapNode GetPreviousNode()
     {
         return _previousNode;
     }
@@ -93,7 +91,7 @@ public class SnakeBody : MonoBehaviour, IBody, IDestroyable
     /// Move tail
     /// </summary>
     /// <param name="targetNode">target node</param>
-    public void Move(MapNode targetNode)
+    public void Move(IMapNode targetNode)
     {
         _previousNode = _currentNode;
         _currentNode = targetNode;

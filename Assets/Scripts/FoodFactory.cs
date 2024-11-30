@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class FoodFactory : MonoBehaviour
+public class FoodFactory : MonoBehaviour, IFoodFactory
 {
     [SerializeField] private BaseFood[] foodPrefabs;
 
-    private SnakeController _snakeController;
-    private SnakeFactory _snakeFactory;
+    private ISnakeController _snakeController;
+    private ISnakeFactory _snakeFactory;
 
     private Dictionary<Type, Stack<BaseFood>> _pool = new();
 
-    public void Initialize(SnakeController snakeController, SnakeFactory snakeFactory)
+    public void Initialize(ISnakeController snakeController, ISnakeFactory snakeFactory)
     {
         _snakeController = snakeController;
         _snakeFactory = snakeFactory;
     }
 
-    public IFood CreateFood(MapNode node)
+    public IFood CreateFood(IMapNode node)
     {
         var foodPrefab = foodPrefabs[Random.Range(0, foodPrefabs.Length)];
 

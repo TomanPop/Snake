@@ -7,13 +7,13 @@ using Random = UnityEngine.Random;
 public class FoodManager : MonoBehaviour
 {
     private float _foodTimer;
-    private Map _map;
-    private GameManager _gameManager;
-    private FoodFactory _foodFactory;
+    private IMap _map;
+    private IGameManager _gameManager;
+    private IFoodFactory _foodFactory;
     private IFood _currentFood;
     private float _nextFoodTime;
 
-    public void Initialize(Map map, GameManager gameManager, FoodFactory foodFactory, IAppSettingsService appSettingsService)
+    public void Initialize(IMap map, IGameManager gameManager, IFoodFactory foodFactory, IAppSettingsService appSettingsService)
     {
         _foodTimer = appSettingsService.GameSettings.FoodTimer;
         _map = map;

@@ -1,9 +1,9 @@
 ﻿public class MoveCommand : ICommand
 {
-    private SnakeController _snakeController;
+    private ISnakeController _snakeController;
     private MoveDirection _moveDirection;
     
-    public MoveCommand(SnakeController snakeController, MoveDirection moveDirection)
+    public MoveCommand(ISnakeController snakeController, MoveDirection moveDirection)
     {
         _snakeController = snakeController;
         _moveDirection = moveDirection;

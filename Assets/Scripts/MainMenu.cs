@@ -12,8 +12,6 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
-
         LoadData();
     }
 
@@ -21,9 +19,11 @@ public class MainMenu : MonoBehaviour
     {
         var jsonService = new JsonService();
         _appSettingsService = new AppSettingsService(jsonService);
+
+        highScore.text = _appSettingsService.GameSaveData.highScore.ToString();
         
-        continueButton.interactable = _appSettingsService.GameSaveData.bodyParts != null &&
-                                      _appSettingsService.GameSaveData.bodyParts.Length > 0;
+        continueButton.interactable = _appSettingsService.GameSaveData.lastBodyParts != null &&
+                                      _appSettingsService.GameSaveData.lastBodyParts.Length > 0;
     }
 
     public void OnNewGameClick()
@@ -39,9 +39,9 @@ public class MainMenu : MonoBehaviour
     {
         var gameSaveData = _appSettingsService.GameSaveData;
         
-        GameContext.BeginScore = gameSaveData.score;
-        GameContext.BeginDirection = gameSaveData.moveDirection;
-        GameContext.SnakePositions = gameSaveData.bodyParts;
+        GameContext.BeginScore = gameSaveData.lastScore;
+        GameContext.BeginDirection = gameSaveData.lastMoveDirection;
+        GameContext.SnakePositions = gameSaveData.lastBodyParts;
 
         LoadGame();
     }

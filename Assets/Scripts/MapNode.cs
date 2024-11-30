@@ -4,13 +4,13 @@ using UnityEngine;
 /// <summary>
 /// Map node
 /// </summary>
-public class MapNode : MonoBehaviour
+public class MapNode : MonoBehaviour, IMapNode
 {
     public Vector2Int NodePosition { get; private set; }
     public IHitable Obstacle { get; set; }
 
-    private Dictionary<MoveDirection, MapNode> _neighbours;
-    private Dictionary<MapNode, MoveDirection> _directions;
+    private Dictionary<MoveDirection, IMapNode> _neighbours;
+    private Dictionary<IMapNode, MoveDirection> _directions;
 
     /// <summary>
     /// Initialize node
@@ -20,8 +20,8 @@ public class MapNode : MonoBehaviour
     public void Initialize(Map map, Vector2Int nodePosition)
     {
         NodePosition = nodePosition;
-        _neighbours = new Dictionary<MoveDirection, MapNode>();
-        _directions = new Dictionary<MapNode, MoveDirection>();
+        _neighbours = new Dictionary<MoveDirection, IMapNode>();
+        _directions = new Dictionary<IMapNode, MoveDirection>();
 
         //mapping neighborhood
         var neighbourUp = map.GetNeighbourNode(NodePosition, MoveDirection.Up);
@@ -47,12 +47,12 @@ public class MapNode : MonoBehaviour
     /// </summary>
     /// <param name="direction">neighbour direction</param>
     /// <returns>neighbour node in direction</returns>
-    public MapNode GetNeighbour(MoveDirection direction)
+    public IMapNode GetNeighbour(MoveDirection direction)
     {
         return _neighbours[direction];
     }
 
-    public MoveDirection GetDirection(MapNode neighbour)
+    public MoveDirection GetDirection(IMapNode neighbour)
     {
         return _directions[neighbour];
     }

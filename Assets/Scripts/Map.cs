@@ -4,12 +4,12 @@ using UnityEngine;
 /// <summary>
 /// Map
 /// </summary>
-public class Map : MonoBehaviour
+public class Map : MonoBehaviour, IMap
 {
     [SerializeField] private MapNode mapNodePrefab;
 
     private Vector2Int mapSize;
-    private Dictionary<Vector2Int, MapNode> mapNodes;
+    private Dictionary<Vector2Int, IMapNode> mapNodes;
 
     private const float MaxOffsetY = 0.1f;
     private const int MaxAttemptCount = 50;
@@ -18,7 +18,7 @@ public class Map : MonoBehaviour
     {
         mapSize = new Vector2Int(appSettingsService.GameSettings.MapSizeX,
             appSettingsService.GameSettings.MapSizeY);
-        mapNodes = new Dictionary<Vector2Int, MapNode>();
+        mapNodes = new Dictionary<Vector2Int, IMapNode>();
         
         GenerateMap();
     }
@@ -40,7 +40,8 @@ public class Map : MonoBehaviour
         //Initialize node after all nodes are prepared
         foreach (var mapNode in mapNodes)
         {
-            mapNode.Value.Initialize(this, mapNode.Key);
+            var node = mapNode.Value as MapNode;
+            node.Initialize(this, mapNode.Key);
         }
     }
 
@@ -50,7 +51,7 @@ public class Map : MonoBehaviour
     /// <param name="nodePosition">node position</param>
     /// <param name="direction">neighbour direction</param>
     /// <returns>neighbour node</returns>
-    public MapNode GetNeighbourNode(Vector2Int nodePosition, MoveDirection direction)
+    public IMapNode GetNeighbourNode(Vector2Int nodePosition, MoveDirection direction)
     {
         var x = nodePosition.x;
         var y = nodePosition.y;
@@ -79,12 +80,12 @@ public class Map : MonoBehaviour
     /// </summary>
     /// <param name="vector2Int">node id</param>
     /// <returns>node with specified id</returns>
-    public MapNode GetNode(Vector2Int vector2Int)
+    public IMapNode GetNode(Vector2Int vector2Int)
     {
         return mapNodes[vector2Int];
     }
 
-    public bool TryGetFreeNode(out MapNode node)
+    public bool TryGetFreeNode(out IMapNode node)
     {
         var attempt = 0;
         

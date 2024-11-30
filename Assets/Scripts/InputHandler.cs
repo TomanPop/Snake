@@ -6,13 +6,11 @@ using UnityEngine;
 /// </summary>
 public class InputHandler : MonoBehaviour
 {
-    private SnakeController _snakeController;
-    private CommandInvoker _commandInvoker;
-    private UIController _uiController;
-    private MoveDirection _currentMoveDirection = MoveDirection.Right;
-    private MoveDirection _nextMoveDirection = MoveDirection.Right;
+    private ISnakeController _snakeController;
+    private ICommandInvoker _commandInvoker;
+    private IUIController _uiController;
 
-    public void Initialize(SnakeController snakeController, UIController uiController, CommandInvoker commandInvoker)
+    public void Initialize(ISnakeController snakeController, IUIController uiController, ICommandInvoker commandInvoker)
     {
         _uiController = uiController;
         _snakeController = snakeController;
@@ -26,12 +24,13 @@ public class InputHandler : MonoBehaviour
             var command = new ShowHideMenuCommand(_uiController);
             _commandInvoker.ExecuteCommand(command);
         }
-        
-        if (UpdateInput())
-            OnInputChanged();
+
+        var moveDirection = UpdateInput();
+        if (moveDirection != MoveDirection.None)
+            OnInputChanged(moveDirection);
     }
 
-    private bool UpdateInput()
+    private MoveDirection UpdateInput()
     {
         //using horizontal and vertical so its usable on joystick too
         var x = Input.GetAxis("Horizontal");
@@ -39,36 +38,30 @@ public class InputHandler : MonoBehaviour
         
         if (x > 0)
         {
-            _nextMoveDirection = MoveDirection.Right;
-            return true;
+            return MoveDirection.Right;
         }
         
         if (x < 0)
         {
-            _nextMoveDirection = MoveDirection.Left;
-            return true;
+            return MoveDirection.Left;
         }
 
         if (y > 0)
         {
-            _nextMoveDirection = MoveDirection.Up;
-            return true;
+            return MoveDirection.Up;
         }
         
         if (y < 0)
         {
-            _nextMoveDirection = MoveDirection.Down;
-            return true;
+            return MoveDirection.Down;
         }
         
-        return false;
+        return MoveDirection.None;
     }
 
-    private void OnInputChanged()
+    private void OnInputChanged(MoveDirection moveDirection)
     {
-        var command = new MoveCommand(_snakeController, _nextMoveDirection);
+        var command = new MoveCommand(_snakeController, moveDirection);
         _commandInvoker.ExecuteCommand(command);
-        
-        _currentMoveDirection = _nextMoveDirection;
     }
 }

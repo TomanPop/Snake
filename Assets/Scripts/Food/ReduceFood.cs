@@ -3,9 +3,9 @@
 /// </summary>
 public class ReduceFood : BaseFood
 {
-    private SnakeFactory _snakeFactory;
+    private ISnakeFactory _snakeFactory;
 
-    public void Initialize(SnakeFactory snakeFactory, SnakeController snakeController, MapNode node)
+    public void Initialize(ISnakeFactory snakeFactory, ISnakeController snakeController, IMapNode node)
     {
         _snakeFactory = snakeFactory;
         base.Initialize(snakeController, node);

@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIController : MonoBehaviour
+public class UIController : MonoBehaviour, IUIController
 {
     [SerializeField] private GameObject pauseMenu;
 
-    private GameManager _gameManager;
-    private SnakeController _snakeController;
-    private AppSettingsService _appSettingsService;
+    private IGameManager _gameManager;
+    private ISnakeController _snakeController;
+    private IAppSettingsService _appSettingsService;
 
-    public void Initialize(GameManager gameManager, SnakeController snakeController, AppSettingsService appSettingsService)
+    public void Initialize(IGameManager gameManager, ISnakeController snakeController, IAppSettingsService appSettingsService)
     {
         _gameManager = gameManager;
         _snakeController = snakeController;
@@ -46,9 +46,10 @@ public class UIController : MonoBehaviour
         
         var data = new GameSaveData()
         {
-            score = _gameManager.GetScore(),
-            bodyParts = parts.ToArray(),
-            moveDirection = _snakeController.GetSnakeBody().GetMoveDirection()
+            highScore = _appSettingsService.GameSaveData.highScore,
+            lastScore = _gameManager.GetScore(),
+            lastBodyParts = parts.ToArray(),
+            lastMoveDirection = _snakeController.GetSnakeBody().GetMoveDirection()
         };
 
         _appSettingsService.SaveData(data);

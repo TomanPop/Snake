@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class SnakeFactory : MonoBehaviour
+public class SnakeFactory : MonoBehaviour, ISnakeFactory
 {
     [SerializeField] private SnakeBody snakeBodyPrefab;
 
     private readonly Stack<SnakeBody> _pool = new();
 
-    public SnakeBody CreateSnakeBodyPart(MapNode node)
+    public IBody CreateSnakeBodyPart(IMapNode node)
     {
-        var snakeBody = GetBodyPart();
+        var snakeBody = GetBodyPart() as SnakeBody;
         snakeBody.Initialize(node);
         
         return snakeBody;
     }
 
-    private SnakeBody GetBodyPart()
+    private IBody GetBodyPart()
     {
         if (_pool.TryPop(out var bodyPart))
         {

@@ -1,8 +1,8 @@
 ﻿public class ShowHideMenuCommand : ICommand
 {
-    private UIController _uiController;
+    private IUIController _uiController;
     
-    public ShowHideMenuCommand(UIController uiController)
+    public ShowHideMenuCommand(IUIController uiController)
     {
         _uiController = uiController;
     }

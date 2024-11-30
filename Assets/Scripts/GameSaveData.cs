@@ -4,7 +4,8 @@ using UnityEngine;
 [Serializable]
 public class GameSaveData
 {
-    public int score;
-    public MoveDirection moveDirection;
-    public Vector2Int[] bodyParts;
+    public int highScore;
+    public int lastScore;
+    public MoveDirection lastMoveDirection;
+    public Vector2Int[] lastBodyParts;
 }

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Game Manager
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IGameManager
 {
     [SerializeField] private Map map;
     [SerializeField] private UIController uiController;
@@ -16,30 +16,32 @@ public class GameManager : MonoBehaviour
     [SerializeField] private FoodFactory foodFactory;
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private GameObject endScreen;
-    
-    private int totalScore;
+
+    private AppSettingsService _appSettingsService;
+    private int _totalScore;
 
     private void Start()
     {
         InitializeGame();
-        UpdateScore();
     }
 
     private void InitializeGame()
     {
         var jsonService = new JsonService();
-        var appSettingsService = new AppSettingsService(jsonService);
-        var commandInvoker = new CommandInvoker();
-        
-        map.Initialize(appSettingsService);
+        _appSettingsService = new AppSettingsService(jsonService);
+      
+        map.Initialize(_appSettingsService);
 
+        var commandInvoker = new CommandInvoker();
         var snake = CreateSnake();
         
-        uiController.Initialize(this, snakeController, appSettingsService);
+        uiController.Initialize(this, snakeController, _appSettingsService);
         inputHandler.Initialize(snakeController, uiController, commandInvoker);
         foodFactory.Initialize(snakeController, snakeFactory);
-        foodManager.Initialize(map, this, foodFactory, appSettingsService);
-        snakeController.Initialize(this, snake, appSettingsService);
+        foodManager.Initialize(map, this, foodFactory, _appSettingsService);
+        snakeController.Initialize(this, snake, _appSettingsService);
+        
+        UpdateScore();
     }
 
     private IBody CreateSnake()
@@ -70,13 +72,13 @@ public class GameManager : MonoBehaviour
     /// <param name="score">added score</param>
     public void AddScore(int score)
     {
-        totalScore += score;
+        _totalScore += score;
         UpdateScore();
     }
 
     private void UpdateScore()
     {
-        scoreText.text = "Score: " + totalScore;
+        scoreText.text = "Score: " + _totalScore;
     }
 
     private void Restart()
@@ -89,12 +91,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void GameOver()
     {
-        var highScore = PlayerPrefs.GetInt("HighScore", 0);
-        if (totalScore > highScore)
+        var highScore = _appSettingsService.GameSaveData.highScore;
+        
+        //clear save
+        var data = new GameSaveData()
         {
-            PlayerPrefs.SetInt("HighScore", totalScore);
-            PlayerPrefs.Save();
-        }
+            highScore = _totalScore > highScore ? _totalScore : highScore,
+            lastScore = 0,
+            lastBodyParts = null,
+            lastMoveDirection = MoveDirection.None
+        };
+
+        _appSettingsService.SaveData(data);
 
         endScreen.SetActive(true);
         Invoke("Restart", 2);
@@ -102,6 +110,6 @@ public class GameManager : MonoBehaviour
 
     public int GetScore()
     {
-        return totalScore;
+        return _totalScore;
     }
 }

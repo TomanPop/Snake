@@ -3,17 +3,17 @@ using UnityEngine;
 /// <summary>
 /// Snake body manager
 /// </summary>
-public class SnakeController : MonoBehaviour
+public class SnakeController : MonoBehaviour, ISnakeController
 {
     private float _snakeBaseTimeStep;
     private IBody _snakeBody;
-    private GameManager _gameManager;
+    private IGameManager _gameManager;
     private SpeedBuff _speedBuff;
 
     private float _nextStep;
     private bool _isAlive = true;
 
-    public void Initialize(GameManager gameManager, IBody snakeBody, IAppSettingsService appSettingsService)
+    public void Initialize(IGameManager gameManager, IBody snakeBody, IAppSettingsService appSettingsService)
     {
         _gameManager = gameManager;
         _snakeBody = snakeBody;
@@ -72,7 +72,7 @@ public class SnakeController : MonoBehaviour
         return true;
     }
 
-    private void Move(MapNode node)
+    private void Move(IMapNode node)
     {
         var obstacle = node.Obstacle;
         if (obstacle  != null)
@@ -105,14 +105,14 @@ public class SnakeController : MonoBehaviour
 
     public void UnregisterBuff(SpeedBuff speedBuff)
     {
-        _speedBuff = speedBuff;
-    }
-
-    public void RegisterBuff(SpeedBuff speedBuff)
-    {
         if (speedBuff != _speedBuff)
             return;
 
         _speedBuff = null;
+    }
+
+    public void RegisterBuff(SpeedBuff speedBuff)
+    {
+        _speedBuff = speedBuff;
     }
 }

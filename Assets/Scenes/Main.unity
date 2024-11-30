@@ -1625,11 +1625,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foodPrefabs:
-  - {fileID: -6371118241498596827, guid: 80d7da6c747a6fb489c13803d432dc14, type: 3}
   - {fileID: 2462981274247096726, guid: ce59b83fcddbbd84c99a0e1d15ef5e70, type: 3}
   - {fileID: 4826445626119483929, guid: 39899bd0366088441b5f13df49e153fb, type: 3}
   - {fileID: -1481806147103888758, guid: 1748b645fde601a4eb5d8e17428bea2b, type: 3}
   - {fileID: -1481806147103888758, guid: ff7fc6ebc8db9b04a8d41d8b6f1c3c8c, type: 3}
+  - {fileID: -6371118241498596827, guid: 80d7da6c747a6fb489c13803d432dc14, type: 3}
+  - {fileID: -6371118241498596827, guid: 80d7da6c747a6fb489c13803d432dc14, type: 3}
+  - {fileID: -6371118241498596827, guid: 80d7da6c747a6fb489c13803d432dc14, type: 3}
 --- !u!4 &1604849287
 Transform:
   m_ObjectHideFlags: 0

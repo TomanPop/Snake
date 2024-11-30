@@ -8,11 +8,11 @@ public class BaseFood : MonoBehaviour, IFood
 {
     [SerializeField] private int score;
 
-    protected MapNode _node;
-    protected SnakeController _snakeController;
+    protected IMapNode _node;
+    protected ISnakeController _snakeController;
     public event Action<int> FoodEaten;
 
-    public void Initialize(SnakeController snakeController, MapNode node)
+    public void Initialize(ISnakeController snakeController, IMapNode node)
     {
         _snakeController = snakeController;
         _node = node;

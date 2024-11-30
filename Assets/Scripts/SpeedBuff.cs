@@ -8,9 +8,9 @@ public class SpeedBuff : MonoBehaviour
     [SerializeField] private float speedMultiplier;
     [SerializeField] private float effectTime;
 
-    private SnakeController _snakeController;
+    private ISnakeController _snakeController;
 
-    public void Initialize(SnakeController snakeController)
+    public void Initialize(ISnakeController snakeController)
     {
         _snakeController = snakeController;
         _snakeController.RegisterBuff(this);

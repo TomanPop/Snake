@@ -1,4 +1,4 @@
-﻿public class CommandInvoker
+﻿public class CommandInvoker : ICommandInvoker
 {
     public void ExecuteCommand(ICommand command)
     {
