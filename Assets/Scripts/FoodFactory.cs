@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 public class FoodFactory : MonoBehaviour, IFoodFactory
@@ -12,6 +13,7 @@ public class FoodFactory : MonoBehaviour, IFoodFactory
 
     private Dictionary<Type, Stack<BaseFood>> _pool = new();
 
+    [Inject]
     public void Initialize(ISnakeController snakeController, ISnakeFactory snakeFactory)
     {
         _snakeController = snakeController;

@@ -1,25 +1,50 @@
 using UnityEngine;
+using Zenject;
 
 /// <summary>
 /// Snake body manager
 /// </summary>
 public class SnakeController : MonoBehaviour, ISnakeController
 {
-    private float _snakeBaseTimeStep;
     private IBody _snakeBody;
+    private ISnakeFactory _snakeFactory;
+    private IMap _map;
     private IGameManager _gameManager;
     private SpeedBuff _speedBuff;
 
+    private float _snakeBaseTimeStep;
     private float _nextStep;
     private bool _isAlive = true;
 
-    public void Initialize(IGameManager gameManager, IBody snakeBody, IAppSettingsService appSettingsService)
+    [Inject]
+    public void Initialize(IGameManager gameManager, IMap map, ISnakeFactory snakeFactory, IAppSettingsService appSettingsService)
     {
         _gameManager = gameManager;
-        _snakeBody = snakeBody;
+        _map = map;
+        _snakeFactory = snakeFactory;
+
+        CreateSnake();
 
         _snakeBaseTimeStep = appSettingsService.GameSettings.SnakeBaseTimeStep;
         Move(GameContext.BeginDirection);
+    }
+    
+    private void CreateSnake()
+    {
+        foreach (var snakePosition in GameContext.SnakePositions)
+        {
+            var node = _map.GetNode(snakePosition);
+            var snakeBody = _snakeFactory.CreateSnakeBodyPart(node);
+
+            if (_snakeBody == null)
+            {
+                _snakeBody = snakeBody;
+            }
+            else
+            {
+                _snakeBody.AddBodyPart(snakeBody);
+            }
+        }
     }
 
     private void LateUpdate()

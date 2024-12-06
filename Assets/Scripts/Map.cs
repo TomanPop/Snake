@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 /// <summary>
 /// Map
@@ -14,6 +15,7 @@ public class Map : MonoBehaviour, IMap
     private const float MaxOffsetY = 0.1f;
     private const int MaxAttemptCount = 50;
     
+    [Inject]
     public void Initialize(IAppSettingsService appSettingsService)
     {
         mapSize = new Vector2Int(appSettingsService.GameSettings.MapSizeX,

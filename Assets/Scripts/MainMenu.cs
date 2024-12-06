@@ -2,23 +2,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private TMP_Text highScore;
     [SerializeField] private Button continueButton;
 
-    private AppSettingsService _appSettingsService;
+    private IAppSettingsService _appSettingsService;
 
-    private void Start()
+    [Inject]
+    public void Initialize(IAppSettingsService appSettingsService)
     {
+        _appSettingsService = appSettingsService;
         LoadData();
     }
 
     private void LoadData()
     {
-        var jsonService = new JsonService();
-        _appSettingsService = new AppSettingsService(jsonService);
         var gameSaveData = _appSettingsService.GameSaveData;
 
         highScore.text = gameSaveData.highScore.ToString();

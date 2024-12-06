@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -13,6 +14,7 @@ public class FoodManager : MonoBehaviour
     private IFood _currentFood;
     private float _nextFoodTime;
 
+    [Inject]
     public void Initialize(IMap map, IGameManager gameManager, IFoodFactory foodFactory, IAppSettingsService appSettingsService)
     {
         _foodTimer = appSettingsService.GameSettings.FoodTimer;

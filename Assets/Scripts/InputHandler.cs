@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 /// <summary>
 /// Snake controller
@@ -10,6 +11,7 @@ public class InputHandler : MonoBehaviour
     private ICommandInvoker _commandInvoker;
     private IUIController _uiController;
 
+    [Inject]
     public void Initialize(ISnakeController snakeController, IUIController uiController, ICommandInvoker commandInvoker)
     {
         _uiController = uiController;

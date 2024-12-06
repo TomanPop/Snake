@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class UIController : MonoBehaviour, IUIController
 {
@@ -9,6 +10,7 @@ public class UIController : MonoBehaviour, IUIController
     private ISnakeController _snakeController;
     private IAppSettingsService _appSettingsService;
 
+    [Inject]
     public void Initialize(IGameManager gameManager, ISnakeController snakeController, IAppSettingsService appSettingsService)
     {
         _gameManager = gameManager;
